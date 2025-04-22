@@ -2,7 +2,7 @@ import type React from "react"
 import { ClerkProvider } from "@clerk/nextjs"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/shared/theme-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 

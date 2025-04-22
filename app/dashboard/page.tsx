@@ -1,12 +1,14 @@
 import { currentUser } from "@clerk/nextjs/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MusicSnippetCard } from "@/components/music-snippet-card"
+import { MusicSnippetCard } from "@/components/shared/music-snippet-card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Upload } from "lucide-react"
+import { getUserByClerkId } from "@/lib/actions/user.actions"
 
 export default async function DashboardPage() {
   const user = await currentUser()
+ const mongoUser = await getUserByClerkId(user?.id as string)
 
   // This would be replaced with actual data from your database
   const recentSnippets = [

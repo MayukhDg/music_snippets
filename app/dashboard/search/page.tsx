@@ -6,7 +6,7 @@ import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { MusicSnippetCard } from "@/components/music-snippet-card"
+import { MusicSnippetCard } from "@/components/shared/music-snippet-card"
 import { Search } from "lucide-react"
 
 export default function SearchPage() {

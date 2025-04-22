@@ -39,3 +39,15 @@ export async function createUser(user: CreateUserParams) {
       console.log(error);
     }
   }
+
+
+  export async function getUserByClerkId(clerkId: string) {
+    try {
+      await connectToDatabase();
+  
+      const user = await User.findOne({ clerkId });
+      return user ? JSON.parse(JSON.stringify(user)) : null;
+    } catch (error) {
+      console.log(error);
+    }
+  }  

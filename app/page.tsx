@@ -1,12 +1,13 @@
 import { currentUser } from "@clerk/nextjs/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MusicSnippetCard } from "@/components/music-snippet-card"
+import { MusicSnippetCard } from "@/components/shared/music-snippet-card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Currency, Upload } from "lucide-react"
 
 export default async function HomePage() {
   const user = await currentUser()
+  
 
   // This would be replaced with actual data from your database
   const recentSnippets = [

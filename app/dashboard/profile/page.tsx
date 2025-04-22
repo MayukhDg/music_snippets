@@ -1,6 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MusicSnippetCard } from "@/components/music-snippet-card"
+import { MusicSnippetCard } from "@/components/shared/music-snippet-card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Edit, Settings } from "lucide-react"

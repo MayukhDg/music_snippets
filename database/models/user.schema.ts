@@ -26,6 +26,22 @@ const UserSchema = new Schema({
   lastName: {
     type: String,
   },
+
+  uploadedSnippets: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Snippet",
+      default: [],
+    },
+  ],
+
+  downloadedSnippets: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Snippet",
+      default: [],
+    },
+  ]
 });
 
 const User = models?.User || model("User", UserSchema);
