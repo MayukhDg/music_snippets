@@ -3,6 +3,7 @@
 
 import User from "@/database/models/user.schema";
 import { connectToDatabase } from "@/database/connection";
+import Snippet from "@/database/models/snippets.schema";
 
 
 
@@ -45,7 +46,10 @@ export async function createUser(user: CreateUserParams) {
     try {
       await connectToDatabase();
   
-      const user = await User.findOne({ clerkId });
+      const user = await User.findOne({ clerkId }).populate({
+        path:"uploadedSnippets",
+        model:Snippet,
+      });
       return user ? JSON.parse(JSON.stringify(user)) : null;
     } catch (error) {
       console.log(error);

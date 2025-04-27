@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { UploadButton } from "@/lib/uploadthing/utils"
 import { ClientUploadedFileData } from "uploadthing/types"
+import { addSnippet } from "@/lib/actions/snippet.actions"
 
 
 interface UploadFormProps {
@@ -24,15 +25,34 @@ const UploadForm: React.FC<UploadFormProps> = ({ mongoUser }) => {
     const router = useRouter()
     const { toast } = useToast()
     const [selectedFile, setSelectedFile] = useState<ClientUploadedFileData<{ uploadedBy: string }> | null>(null)
-    console.log("Selected file:", selectedFile)
+    const [title, setTitle] = useState("")
+    const [content, setContent] = useState("")
+    const [price, setPrice] = useState("")
   
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
        setIsSubmitting(true)
         try {
-        
+          const snippetData = {
+            title,
+            content,
+            author: mongoUser._id,
+            price: parseFloat(price),
+            file: selectedFile?.ufsUrl || "", // Provide a default value
+          }
+
+          const uploadedSnippet =  await addSnippet(snippetData)
+          if(uploadedSnippet) {
+            toast({
+              title: "Snippet uploaded",
+              description: "Your snippet has been successfully uploaded",
+            })
+            setIsSubmitting(false)
+            router.push("/dashboard")
+          }
+
        } catch (error) {
-        
+        console.error("Error uploading snippet:", error)
        }
     }
   
@@ -45,23 +65,22 @@ const UploadForm: React.FC<UploadFormProps> = ({ mongoUser }) => {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
-              <Input id="title" placeholder="Enter a title for your snippet" required />
+              <Input value={title} onChange={e=>setTitle(e.target.value)} id="title" placeholder="Enter a title for your snippet" required />
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="price">Price</Label>
+              <Input value={price} onChange={e=>setPrice(e.target.value)} id="price"  placeholder="Enter a price for your snippet" required />
+              </div>
+            <div className="space-y-2">
+              <Label htmlFor="content">Description</Label>
               <Textarea
-                id="description"
+                value={content} 
+                onChange={e=>setContent(e.target.value)}
+                id="content"
                 placeholder="Describe your music snippet (genre, mood, instruments, etc.)"
                 className="min-h-[100px]"
               />
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="tags">Tags (comma separated)</Label>
-              <Input id="tags" placeholder="jazz, intro, upbeat" />
-            </div>
-
         <UploadButton
         endpoint="imageUploader"
         onClientUploadComplete={(res) => {

@@ -9,7 +9,6 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata = {
   title: "SoundBite - Share Music Snippets",
   description: "Upload and share music snippets for podcast integration",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({

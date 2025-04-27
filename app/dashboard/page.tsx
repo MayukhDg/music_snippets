@@ -10,18 +10,9 @@ export default async function DashboardPage() {
   const user = await currentUser()
  const mongoUser = await getUserByClerkId(user?.id as string)
 
-  // This would be replaced with actual data from your database
-  const recentSnippets = [
-    { id: "1", title: "Jazz Intro", duration: "0:15", createdAt: "2 days ago" },
-    { id: "2", title: "Rock Outro", duration: "0:20", createdAt: "1 week ago" },
-    { id: "3", title: "Ambient Background", duration: "0:30", createdAt: "2 weeks ago" },
-  ]
+ console.log("mongoUser", mongoUser)
 
-  const popularSnippets = [
-    { id: "4", title: "Electronic Beat", duration: "0:25", createdAt: "3 days ago" },
-    { id: "5", title: "Classical Piano", duration: "0:40", createdAt: "5 days ago" },
-    { id: "6", title: "Hip Hop Loop", duration: "0:18", createdAt: "1 day ago" },
-  ]
+  
 
   return (
     <div className="grid gap-6">
@@ -41,9 +32,9 @@ export default async function DashboardPage() {
             <CardTitle>Total Snippets</CardTitle>
             <CardDescription>Your uploaded music snippets</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">6</div>
-          </CardContent>
+            <CardContent> 
+            <div className="text-3xl font-bold">{mongoUser?.uploadedSnippets?.length}</div>
+            </CardContent> 
         </Card>
         <Card>
           <CardHeader className="pb-2">
@@ -73,25 +64,11 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {recentSnippets.map((snippet) => (
-                <MusicSnippetCard key={snippet.id} snippet={snippet} />
+              {mongoUser?.uploadedSnippets?.map((snippet:any) => (
+                <MusicSnippetCard mongoUser={mongoUser?._id} key={snippet._id} snippet={snippet} />
               ))}
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Popular Snippets</CardTitle>
-            <CardDescription>Most played music snippets</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {popularSnippets.map((snippet) => (
-                <MusicSnippetCard key={snippet.id} snippet={snippet} />
-              ))}
-            </div>
-          </CardContent>
+          </CardContent> 
         </Card>
       </div>
     </div>
