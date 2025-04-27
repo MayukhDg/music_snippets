@@ -23,7 +23,7 @@ const Checkout = ({ snippet, userId }: any) => {
 
   const onCheckout = async () => {
     const snippetToBePurchased = {
-      snippetTitle: snippet.title,
+      title: snippet.title,
       snippetId: snippet._id,
       price: snippet.price,
       buyerId: userId

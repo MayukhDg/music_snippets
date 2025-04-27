@@ -65,7 +65,7 @@ export default async function DashboardPage() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {mongoUser?.uploadedSnippets?.map((snippet:any) => (
-                <MusicSnippetCard mongoUser={mongoUser?._id} key={snippet._id} snippet={snippet} />
+                <MusicSnippetCard mongoUser={mongoUser._id} key={snippet?._id} snippet={snippet} />
               ))}
             </div>
           </CardContent> 
