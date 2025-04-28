@@ -9,9 +9,6 @@ import { getUserByClerkId } from "@/lib/actions/user.actions"
 export default async function DashboardPage() {
   const user = await currentUser()
  const mongoUser = await getUserByClerkId(user?.id as string)
-
- console.log("mongoUser", mongoUser)
-
   
 
   return (

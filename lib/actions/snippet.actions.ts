@@ -54,3 +54,25 @@ export async function fetchAllSnippets() {
         console.error("Error fetching snippets:", error);
     }
 }
+
+
+export async function searchSnippets(query: string) {
+    try {
+        
+        if(!query) {
+            return []
+        }
+        await connectToDatabase();
+        const snippets = await Snippet.find({
+            $or: [
+                { title: { $regex: query, $options: 'i' } },
+                { content: { $regex: query, $options: 'i' } }
+            ]
+        });
+        return JSON.parse(JSON.stringify(snippets));
+    } catch (error) {
+        console.error('Error searching snippets:', error);
+        throw error;
+    }
+}
+  

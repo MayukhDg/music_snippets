@@ -1,35 +1,43 @@
 "use client"
+
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import { MusicSnippetCard } from "@/components/shared/music-snippet-card"
-import { Search } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useSearchParams } from "next/navigation"
+import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils"
 
 
 export default function SearchComponent({allSnippets}: { allSnippets: any[] }) {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [searchResults, setSearchResults] = useState<any[]>([])
-  const [isSearching, setIsSearching] = useState(false)
+  const [query, setQuery] = useState('');
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  
-const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSearching(true)
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      let newUrl = '';
 
-    
-      if (searchQuery.trim() === "") {
-        setSearchResults([])
+      if(query) {
+        newUrl = formUrlQuery({
+          params: searchParams.toString(),
+          key: 'query',
+          value: query
+        })
       } else {
-        const results = allSnippets.filter((snippet) => snippet.title.toLowerCase().includes(searchQuery.toLowerCase())
-        || snippet.content.toLowerCase().includes(searchQuery.toLowerCase())
-     )
-        setSearchResults(results)
+        newUrl = removeKeysFromQuery({
+          params: searchParams.toString(),
+          keysToRemove: ['query']
+        })
       }
-      setIsSearching(false)
-    }
+
+      router.push(newUrl, { scroll: false });
+    }, 300)
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [query, searchParams, router])  
     
     return (
         <div>
@@ -39,23 +47,19 @@ const handleSearch = (e: React.FormEvent) => {
           <CardDescription>Search for music snippets by title, genre, or mood</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSearch} className="flex gap-2">
+          <form className="flex gap-2">
             <Input
               placeholder="Search music snippets..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
               className="flex-1"
             />
-            <Button type="submit" disabled={isSearching}>
-              <Search className="h-4 w-4 mr-2" />
-              {isSearching ? "Searching..." : "Search"}
-            </Button>
           </form>
         </CardContent>
       </Card>
-         {searchResults.length > 0 ? (
+         {allSnippets.length > 0 ? (
             <div className="grid gap-4 mt-4">
-              {searchResults.map((snippet) => (
+              {allSnippets.map((snippet) => (
                 <MusicSnippetCard key={snippet._id} snippet={snippet} />
               ))}
             </div>

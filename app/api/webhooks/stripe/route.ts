@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       stripeId: id,
       snippetId: metadata?.snippetId || '',
       buyerId: metadata?.buyerId || '',
-      totalAmount: amount_total ? (amount_total / 100).toString() : '0',
+      totalAmount: amount_total,
       createdAt: new Date(),
     }
 

@@ -1,7 +1,6 @@
-"use server"
+"use server";
 
 import Stripe from 'stripe';
-import { redirect } from 'next/navigation';
 import { connectToDatabase } from '@/database/connection';
 import Order from '@/database/models/order.schema';
 
@@ -13,7 +12,7 @@ interface Snippet {
 }
 
 export const checkoutOrder = async (snippet: Snippet) => {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {});
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
   const price = Number(snippet.price) * 100;
 
@@ -36,18 +35,20 @@ export const checkoutOrder = async (snippet: Snippet) => {
         buyerId: snippet.buyerId,
       },
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/cancel`,
+      success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/dashboard`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/`,
     });
 
-    
-   redirect(session.url!); // Ensure session.url is valid
-  } catch (error) {
-    console.error("Error during checkout:", error);
-    throw error; // Re-throw the error for further handling
+  return session.url!    
+  
+} catch (error:any) {
+    console.error("Error creating checkout session:", error);
   }
 };
-  export const createOrder = async (order: any) => {
+  
+
+
+export const createOrder = async (order: any) => {
     try {
       await connectToDatabase()
       const newOrder = await Order.create(order)

@@ -13,7 +13,7 @@ const OrderSchema = new Schema({
     unique: true,
   },
   totalAmount: {
-    type: String,
+    type: Number,
   },
   snippetId: {
     type: Schema.Types.ObjectId,

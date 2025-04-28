@@ -27,7 +27,7 @@ const UploadForm: React.FC<UploadFormProps> = ({ mongoUser }) => {
     const [selectedFile, setSelectedFile] = useState<ClientUploadedFileData<{ uploadedBy: string }> | null>(null)
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
-    const [price, setPrice] = useState("")
+    const [price, setPrice] = useState(0)
   
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
@@ -37,7 +37,7 @@ const UploadForm: React.FC<UploadFormProps> = ({ mongoUser }) => {
             title,
             content,
             author: mongoUser._id,
-            price: parseFloat(price),
+            price,
             file: selectedFile?.ufsUrl || "", // Provide a default value
           }
 
@@ -69,7 +69,7 @@ const UploadForm: React.FC<UploadFormProps> = ({ mongoUser }) => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="price">Price</Label>
-              <Input value={price} onChange={e=>setPrice(e.target.value)} id="price"  placeholder="Enter a price for your snippet" required />
+              <Input value={price} onChange={e=>setPrice(parseFloat(e.target.value) || 0)} id="price"  placeholder="Enter a price for your snippet" required />
               </div>
             <div className="space-y-2">
               <Label htmlFor="content">Description</Label>

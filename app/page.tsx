@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MusicSnippetCard } from "@/components/shared/music-snippet-card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Upload, LogIn } from "lucide-react"
+import { Upload, LogIn, LogInIcon } from "lucide-react"
 import { getUserByClerkId } from "@/lib/actions/user.actions"
 import { fetchAllSnippets } from "@/lib/actions/snippet.actions"
 
@@ -16,7 +16,7 @@ export default async function HomePage() {
   
   
   return (
-    <div className="grid gap-6 px-4 py-6">
+    <div className="grid gap-6 p-5">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">{user? `Welcome back, ${user?.firstName}`:"Welcome to SoundBite"}</h1>
         { mongoUser?._id ? <Link href="/dashboard/upload">
@@ -24,55 +24,34 @@ export default async function HomePage() {
             <Upload className="h-4 w-4" />
             Upload New Snippet
           </Button>
-        </Link>: 
+        </Link>:
         <Link href="/sign-in">
         <Button className="gap-2">
-          <LogIn className="h-4 w-4" />
-          Sign In 
+          <LogInIcon className="h-4 w-4" />
+          Upload New Snippet
         </Button>
       </Link>
         }
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle>Total Snippets</CardTitle>
-            <CardDescription>Your uploaded music snippets</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">6</div>
-          </CardContent>
-        </Card>
-        <div className="grid gap-6">
-
-        
+      <div className="grid gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Popular Snippets</CardTitle>
-            <CardDescription>Most played music snippets</CardDescription>
+            <CardTitle>Recent Snippets</CardTitle>
+            <CardDescription>Recently uploaded music snippets</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {mongoUser?._id ? (
-                mongoUser.uploadedSnippets?.length > 0 ? (
-                  mongoUser.uploadedSnippets.map((snippet: any) => (
-                    <MusicSnippetCard key={snippet._id} snippet={snippet} />
-                  ))
-                ) : (
-                  <p className="text-center text-muted-foreground">You haven't uploaded any snippets yet.</p>
-                )
-              ) : allSnippets?.length > 0 ? (
-                allSnippets.map((snippet: any) => (
-                  <MusicSnippetCard key={snippet._id} snippet={snippet} />
-                ))
-              ) : (
-                <p className="text-center text-muted-foreground">No snippets available.</p>
+              {allSnippets.length > 0 ? allSnippets.map((snippet:any) => (
+                <MusicSnippetCard mongoUser={mongoUser?._id} key={snippet?._id} snippet={snippet} />
+              )): (
+                <div className="flex items-center justify-center w-full h-full">
+                  <p className="text-gray-500">No snippets available</p>
+                </div>
               )}
             </div>
-          </CardContent>
+          </CardContent> 
         </Card>
-        </div>
       </div>
     </div>
   )

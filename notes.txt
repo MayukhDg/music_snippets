@@ -1,2 +1,5 @@
 Write mongodb code for uploading snippets to database
 Implement stripe payments
+
+
+

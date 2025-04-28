@@ -1,11 +1,15 @@
 
 import SearchComponent from "@/components/shared/Search"
-import { fetchAllSnippets } from "@/lib/actions/snippet.actions"
+import { fetchAllSnippets, searchSnippets } from "@/lib/actions/snippet.actions"
+import { SearchParamProps } from "@/types";
 
 
-export default async function SearchPage() {
+export default async function SearchPage({ searchParams }: SearchParamProps) {
   
-  const allSnippets = await fetchAllSnippets();
+  const searchText = (searchParams?.query as string) || '';
+
+  
+  const allSnippets = await searchSnippets(searchText);
   
   return (
     <div className="grid gap-6">
