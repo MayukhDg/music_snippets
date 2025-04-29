@@ -89,4 +89,21 @@ export async function searchSnippets({query, page, limit=3}: {query: string, pag
         throw error;
     }
 }
+
+
+export const fetchUserSnippets = async ({userId, page, limit =3 }: { userId: string; page?: number; limit?: number }) => {
+    try {
+        const skipAmount = (Number(page) - 1) * limit       
+        await connectToDatabase();
+        const snippets = await Snippet.find({ author: userId }).
+        sort({ createdAt: 'desc' }).skip(skipAmount).limit(limit)
+        const snippetsCount = await Snippet.countDocuments({ author: userId });
+        return {
+           data:JSON.parse(JSON.stringify(snippets)),
+              totalPages: Math.ceil(snippetsCount / limit)
+        };
+    } catch (error) {
+        console.error("Error fetching user snippets:", error);
+    }
+}
   

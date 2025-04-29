@@ -8,11 +8,10 @@ import { formUrlQuery } from '@/lib/utils'
 
 
 interface PaginationProps {
-    allSnippets: any[];
     page: number;
     totalPages: number;
   }
-const Pagination = ({ allSnippets, page, totalPages }:PaginationProps) => {
+const Pagination = ({ page, totalPages }:PaginationProps) => {
   
     const router = useRouter()
     const searchParams = useSearchParams()

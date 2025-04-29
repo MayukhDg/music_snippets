@@ -5,10 +5,19 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Upload } from "lucide-react"
 import { getUserByClerkId } from "@/lib/actions/user.actions"
+import { fetchUserSnippets } from "@/lib/actions/snippet.actions"
+import Pagination from "@/components/shared/Pagination"
 
-export default async function DashboardPage() {
+interface SearchParamProps {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
+export default async function DashboardPage({ searchParams }: SearchParamProps) {
   const user = await currentUser()
  const mongoUser = await getUserByClerkId(user?.id as string)
+ const page = Number(searchParams?.page) || 1;
+ const userSnippets = await fetchUserSnippets(         
+  { userId: mongoUser?._id, page, limit: 3 })
   
 
   return (
@@ -61,12 +70,13 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {mongoUser?.uploadedSnippets?.map((snippet:any) => (
+              {userSnippets?.data?.map((snippet:any) => (
                 <MusicSnippetCard mongoUser={mongoUser._id} key={snippet?._id} snippet={snippet} />
               ))}
             </div>
           </CardContent> 
         </Card>
+        <Pagination page={page} totalPages={userSnippets?.totalPages || 0}  />
       </div>
     </div>
   )
