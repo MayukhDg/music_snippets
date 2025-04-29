@@ -9,9 +9,13 @@ import { MusicSnippetCard } from "@/components/shared/music-snippet-card"
 import { useRouter } from "next/navigation"
 import { useSearchParams } from "next/navigation"
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils"
+import Pagination from "./Pagination"
 
 
-export default function SearchComponent({allSnippets}: { allSnippets: any[] }) {
+export default function SearchComponent({ allSnippets, page, totalPages }: { allSnippets: any[], 
+  page: number, 
+  totalPages: number 
+}){
   const [query, setQuery] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -66,6 +70,8 @@ export default function SearchComponent({allSnippets}: { allSnippets: any[] }) {
           ):
           <p>No Results Yet</p>
           }
+
+          <Pagination totalPages={totalPages} allSnippets={allSnippets} page={page}/>
           
         </div>
 

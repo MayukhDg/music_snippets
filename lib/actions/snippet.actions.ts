@@ -56,20 +56,34 @@ export async function fetchAllSnippets() {
 }
 
 
-export async function searchSnippets(query: string) {
+export async function searchSnippets({query, page, limit=3}: {query: string, page: number, limit?: number}) {
     try {
         
         if(!query) {
             return []
         }
         await connectToDatabase();
+        const skipAmount = (Number(page) - 1) * limit
         const snippets = await Snippet.find({
             $or: [
                 { title: { $regex: query, $options: 'i' } },
                 { content: { $regex: query, $options: 'i' } }
             ]
-        });
-        return JSON.parse(JSON.stringify(snippets));
+        }).sort({ createdAt: 'desc' })
+        .skip(skipAmount)
+        .limit(limit)
+        
+        const snippetsCount = await Snippet.countDocuments(({
+            $or: [
+                { title: { $regex: query, $options: 'i' } },
+                { content: { $regex: query, $options: 'i' } }
+            ]
+        }))
+        
+        return {
+           data: JSON.parse(JSON.stringify(snippets)),
+           totalPages: Math.ceil(snippetsCount / limit),
+        };
     } catch (error) {
         console.error('Error searching snippets:', error);
         throw error;
