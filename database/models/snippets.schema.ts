@@ -15,6 +15,7 @@ const SnippetSchema: Schema = new Schema(
         author: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
         file: { type: String, required: true },
         price: { type: Number, required: true },
+        downloadCount: { type: Number },
     },
     {
         timestamps: true, // Automatically adds createdAt and updatedAt fields

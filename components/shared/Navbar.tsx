@@ -1,28 +1,20 @@
-import type React from "react"
+import React from 'react'
 import { UserButton } from "@clerk/nextjs"
 import Link from "next/link"
 import { AudioWaveformIcon as Waveform, Search, Upload, User, Home } from "lucide-react"
-import { Suspense } from "react"
+import { currentUser } from "@clerk/nextjs/server"
+import { getUserByClerkId } from "@/lib/actions/user.actions"
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+
+const Navbar = async() => {
+
+    const user = await currentUser()
+    const mongoUser = await getUserByClerkId(user?.id as string)
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-            <Waveform className="h-6 w-6" />
-            <span>SoundBite</span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <UserButton afterSignOutUrl="/" />
-          </div>
-        </div>
-      </header>
-      <div className="flex flex-1">
+     <React.Fragment>
+      
+      <div className="flex">
         <aside className="hidden w-64 border-r bg-gray-100/40 dark:bg-gray-800/40 lg:block">
           <div className="flex h-full flex-col gap-2 p-4">
             <Link
@@ -47,18 +39,21 @@ export default function DashboardLayout({
               Search
             </Link>
             <Link
-              href="/dashboard/profile"
+              href={`/profile/${mongoUser?._id}`}
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
             >
               <User className="h-5 w-5" />
               Profile
             </Link>
+          
           </div>
-        </aside>
-        <main className="flex-1 p-4 md:p-6">
-          <Suspense>{children}</Suspense>
-        </main>
+          
+        </aside> 
       </div>
-    </div>
+     </React.Fragment>
+      
+   
   )
 }
+
+export default Navbar

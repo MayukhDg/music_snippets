@@ -7,6 +7,7 @@ import { Upload } from "lucide-react"
 import { getUserByClerkId } from "@/lib/actions/user.actions"
 import { fetchUserSnippets } from "@/lib/actions/snippet.actions"
 import Pagination from "@/components/shared/Pagination"
+import { getUserDownloadCount } from "@/lib/actions/order.actions"
 
 interface SearchParamProps {
   searchParams?: { [key: string]: string | string[] | undefined };
@@ -18,10 +19,12 @@ export default async function DashboardPage({ searchParams }: SearchParamProps) 
  const page = Number(searchParams?.page) || 1;
  const userSnippets = await fetchUserSnippets(         
   { userId: mongoUser?._id, page, limit: 3 })
+  const userDownloadCount  = await getUserDownloadCount(mongoUser?._id)
+
   
 
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-6 p-5">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user?.firstName}</h1>
         <Link href="/dashboard/upload">
@@ -42,22 +45,14 @@ export default async function DashboardPage({ searchParams }: SearchParamProps) 
             <div className="text-3xl font-bold">{mongoUser?.uploadedSnippets?.length}</div>
             </CardContent> 
         </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle>Total Plays</CardTitle>
-            <CardDescription>Number of times your snippets were played</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">128</div>
-          </CardContent>
-        </Card>
+        
         <Card>
           <CardHeader className="pb-2">
             <CardTitle>Downloads</CardTitle>
             <CardDescription>Number of times your snippets were downloaded</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">24</div>
+            <div className="text-3xl font-bold">{userDownloadCount}</div>
           </CardContent>
         </Card>
       </div>

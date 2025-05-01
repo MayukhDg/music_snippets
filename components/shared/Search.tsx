@@ -68,10 +68,10 @@ export default function SearchComponent({ allSnippets, page, totalPages }: { all
               ))}
             </div>
           ):
-          <p>No Results Yet</p>
+          <p className="mt-3">No Results Yet</p>
           }
 
-          <Pagination totalPages={totalPages} allSnippets={allSnippets} page={page}/>
+          <Pagination totalPages={totalPages} page={page}/>
           
         </div>
 

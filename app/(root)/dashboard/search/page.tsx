@@ -16,7 +16,7 @@ export default async function SearchPage({ searchParams }: SearchParamProps) {
   });
   
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-6 p-5">
       <h1 className="text-3xl font-bold tracking-tight">Search Music Snippets</h1>
      <SearchComponent totalPages={!Array.isArray(allSnippets) ? allSnippets?.totalPages : 0} page={page} allSnippets={Array.isArray(allSnippets) ? [] : allSnippets?.data} />
       

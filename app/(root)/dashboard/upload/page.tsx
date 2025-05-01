@@ -11,7 +11,7 @@ export default async function UploadPage() {
   const mongoUser = await getUserByClerkId(user?.id as string);
   
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-2xl p-5">
       <h1 className="text-3xl font-bold tracking-tight mb-6">Upload Music Snippet</h1>
 <Card>
         <UploadForm mongoUser={mongoUser}/>

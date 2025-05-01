@@ -6,6 +6,15 @@ import { connectToDatabase } from "@/database/connection";
 import Snippet from "@/database/models/snippets.schema";
 
 
+interface CreateUserParams {
+  clerkId: string,
+      email: string;
+      username: string;
+      firstName?: string;
+      lastName?: string;
+      photo?: string;
+}
+
 
 export async function createUser(user: CreateUserParams) {
     try {
@@ -47,6 +56,20 @@ export async function createUser(user: CreateUserParams) {
       await connectToDatabase();
   
       const user = await User.findOne({ clerkId }).populate({
+        path:"uploadedSnippets",
+        model:Snippet,
+      });
+      return user ? JSON.parse(JSON.stringify(user)) : null;
+    } catch (error) {
+      console.log(error);
+    }
+  }  
+
+  export async function getUserById(userId: string) {
+    try {
+      await connectToDatabase();
+  
+      const user = await User.findById(userId).populate({
         path:"uploadedSnippets",
         model:Snippet,
       });

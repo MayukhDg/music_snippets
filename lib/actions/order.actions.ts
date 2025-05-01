@@ -3,6 +3,8 @@
 import Stripe from 'stripe';
 import { connectToDatabase } from '@/database/connection';
 import Order from '@/database/models/order.schema';
+import mongoose from 'mongoose';
+import Snippet from '@/database/models/snippets.schema';
 
 interface Snippet {
   snippetId: string;
@@ -47,6 +49,23 @@ export const checkoutOrder = async (snippet: Snippet) => {
 };
   
 
+export async function incrementDownloadCount(snippetId: string): Promise<void> {
+  try {
+    await connectToDatabase();  
+    const updatedSnippet = await Snippet.findByIdAndUpdate(
+          snippetId,
+          { $inc: { downloadCount: 1 } },
+          { new: true }
+      );
+    await updatedSnippet?.save(); // Save the updated snippet to persist changes'
+     return JSON.parse(JSON.stringify(updatedSnippet)); // Return the updated snippet
+  } catch (error) {
+      console.error('Failed to update download count:', error);
+      throw error;
+  }
+}
+
+
 
 export const createOrder = async (order: any) => {
     try {
@@ -59,3 +78,28 @@ export const createOrder = async (order: any) => {
       throw new Error("Error creating order")
     }
   }
+
+
+  export async function getUserDownloadCount(userId: string): Promise<number> {
+    try {
+        await connectToDatabase(); // Ensure the database connection is established
+        const result = await Snippet.aggregate([
+            {
+                $match: {
+                    author: new mongoose.Types.ObjectId(userId),
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalDownloads: { $sum: '$downloadCount' },
+                },
+            },
+        ]);
+
+        return result[0]?.totalDownloads || 0;
+    } catch (error) {
+        console.error('Error calculating user download count:', error);
+        throw error;
+    }
+}

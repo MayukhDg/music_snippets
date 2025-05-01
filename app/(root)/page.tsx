@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MusicSnippetCard } from "@/components/shared/music-snippet-card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Upload, LogIn, LogInIcon } from "lucide-react"
+import { Upload, LogInIcon } from "lucide-react"
 import { getUserByClerkId } from "@/lib/actions/user.actions"
 import { fetchAllSnippets } from "@/lib/actions/snippet.actions"
 
@@ -28,7 +28,7 @@ export default async function HomePage() {
         <Link href="/sign-in">
         <Button className="gap-2">
           <LogInIcon className="h-4 w-4" />
-          Upload New Snippet
+          Log In 
         </Button>
       </Link>
         }

@@ -4,37 +4,44 @@ import { MusicSnippetCard } from "@/components/shared/music-snippet-card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Edit, Settings } from "lucide-react"
+import { getUserByClerkId, getUserById } from "@/lib/actions/user.actions"
+import { fetchUserSnippets } from "@/lib/actions/snippet.actions"
+import { getUserDownloadCount } from "@/lib/actions/order.actions"
+import Pagination from "@/components/shared/Pagination"
 
-export default async function ProfilePage() {
-  const user = await currentUser()
 
+interface SearchParamProps {
+  searchParams?: { [key: string]: string | string[] | undefined };
+  params?: { [key: string]: string | undefined };
+}
+
+export default async function ProfilePage({ searchParams, params }: SearchParamProps) {
+   const mongoUser = await getUserById(params?.id as string)
+   const page = Number(searchParams?.page) || 1;
+   const userSnippets = await fetchUserSnippets(         
+    { userId: mongoUser?._id, page, limit: 3 })
+    const userDownloadCount  = await getUserDownloadCount(mongoUser?._id)
+  
   // This would be replaced with actual data from your database
-  const userSnippets = [
-    { id: "1", title: "Jazz Intro", duration: "0:15", createdAt: "2 days ago" },
-    { id: "2", title: "Rock Outro", duration: "0:20", createdAt: "1 week ago" },
-    { id: "3", title: "Ambient Background", duration: "0:30", createdAt: "2 weeks ago" },
-    { id: "4", title: "Electronic Beat", duration: "0:25", createdAt: "3 days ago" },
-    { id: "5", title: "Classical Piano", duration: "0:40", createdAt: "5 days ago" },
-    { id: "6", title: "Hip Hop Loop", duration: "0:18", createdAt: "1 day ago" },
-  ]
+  
 
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-2 p-5">
       <h1 className="text-3xl font-bold tracking-tight">Your Profile</h1>
 
       <Card>
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
             <Avatar className="w-24 h-24 border-4 border-background">
-              <AvatarImage src={user?.imageUrl || "/placeholder.svg"} alt={user?.firstName || "User"} />
-              <AvatarFallback>{user?.firstName?.charAt(0) || "U"}</AvatarFallback>
+              <AvatarImage src={mongoUser?.photo || "/placeholder.svg"} alt={mongoUser?.firstName || "User"} />
+              <AvatarFallback>{mongoUser?.firstName?.charAt(0) || "U"}</AvatarFallback>
             </Avatar>
 
             <div className="flex-1 space-y-1">
               <h2 className="text-2xl font-bold">
-                {user?.firstName} {user?.lastName}
+                {mongoUser?.firstName} {mongoUser?.lastName}
               </h2>
-              <p className="text-gray-500">@{user?.username || user?.firstName?.toLowerCase()}</p>
+              <p className="text-gray-500">@{mongoUser?.username || mongoUser?.firstName?.toLowerCase()}</p>
               <p className="text-sm">Member since {new Date().toLocaleDateString()}</p>
             </div>
 
@@ -51,21 +58,6 @@ export default async function ProfilePage() {
           </div>
         </CardContent>
       </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Music Snippets</CardTitle>
-          <CardDescription>All the music snippets you've uploaded</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {userSnippets.map((snippet) => (
-              <MusicSnippetCard key={snippet.id} snippet={snippet} />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
       <Card>
         <CardHeader>
           <CardTitle>Profile Stats</CardTitle>
@@ -74,20 +66,32 @@ export default async function ProfilePage() {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-              <div className="text-2xl font-bold">{userSnippets.length}</div>
+              <div className="text-2xl font-bold">{userSnippets?.data?.length}</div>
               <div className="text-sm text-gray-500">Total Snippets</div>
             </div>
             <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-              <div className="text-2xl font-bold">128</div>
-              <div className="text-sm text-gray-500">Total Plays</div>
-            </div>
-            <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-              <div className="text-2xl font-bold">24</div>
+              <div className="text-2xl font-bold">{userDownloadCount}</div>
               <div className="text-sm text-gray-500">Downloads</div>
             </div>
           </div>
         </CardContent>
       </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Your Music Snippets</CardTitle>
+          <CardDescription>All the music snippets you've uploaded</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {userSnippets?.data?.map((snippet:any) => (
+              <MusicSnippetCard key={snippet._id} snippet={snippet} />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      
+       <Pagination page={page} totalPages={userSnippets?.totalPages || 0}  />
     </div>
   )
 }

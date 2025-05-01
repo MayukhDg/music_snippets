@@ -48,7 +48,7 @@ export const addSnippet = async (snippet: SnippetInput): Promise<SnippetOutput |
 export async function fetchAllSnippets() {
     try {
         await connectToDatabase();
-        const snippets = await Snippet.find({})
+        const snippets = await Snippet.find({}).limit(5).sort({ createdAt: 'desc' });
         return JSON.parse(JSON.stringify(snippets))
     } catch (error) {
         console.error("Error fetching snippets:", error);
