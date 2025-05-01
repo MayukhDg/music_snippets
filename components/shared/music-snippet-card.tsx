@@ -3,27 +3,42 @@
 import { useEffect, useRef, useState } from "react"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Play, Pause, Download, Share2 } from "lucide-react"
+import { Play, Pause, Download, Trash } from "lucide-react"
 import Checkout from "./Checkout"
+import { deleteSnippet } from "@/lib/actions/snippet.actions"
 
 interface MusicSnippetProps {
   snippet: {
     _id: string
     title: string
     content: string
-    duration: string
     createdAt: string
     updatedAt: string
     file: string
-    userId: string
-  }
+    author: string
+  },
+
+  mongoUser: string
 }
 
-export function MusicSnippetCard({ snippet, mongoUser }: any) {
+export function MusicSnippetCard({ snippet, mongoUser }: MusicSnippetProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [audioDuration, setAudioDuration] = useState(0)
   const audioRef = useRef<HTMLAudioElement>(null)
+
+  const handleDeleteSnippet = async (id: string) => {
+    try {
+      const confirmed = confirm("Are you sure you want to delete this snippet?")
+      if (confirmed){
+        await deleteSnippet(id)
+      }
+      alert("Snippet deleted successfully")
+    } catch (error) {
+      console.error("Error deleting snippet:", error) 
+      alert("Failed to delete snippet")
+    }
+  }
 
   const togglePlay = () => {
     if (!audioRef.current) return
@@ -106,6 +121,10 @@ export function MusicSnippetCard({ snippet, mongoUser }: any) {
             <Download className="h-4 w-4" />
           </Button>
           </a>
+          { mongoUser === snippet.author && 
+          <Button onClick={()=>handleDeleteSnippet(snippet._id)} size="icon" variant="ghost" className="h-8 w-8">
+            <Trash className="h-4 w-4" />
+          </Button>}
           <Checkout snippet={snippet} userId={mongoUser}/>
         </div>
       </CardFooter>

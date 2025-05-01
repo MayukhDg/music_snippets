@@ -107,3 +107,16 @@ export const fetchUserSnippets = async ({userId, page, limit =3 }: { userId: str
     }
 }
   
+
+export async function deleteSnippet(snippetId: string) {
+    try {
+        await connectToDatabase();
+        const deletedSnippet = await Snippet.findByIdAndDelete(snippetId);
+        await User.findByIdAndUpdate(deletedSnippet?.author, {
+            $pull: { uploadedSnippets: deletedSnippet?._id },
+        });
+        return JSON.parse(JSON.stringify(deletedSnippet));
+    } catch (error) {
+        console.error("Error deleting snippet:", error);
+    }
+}
