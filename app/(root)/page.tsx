@@ -12,13 +12,14 @@ export default async function HomePage() {
   const user = await currentUser()
   const mongoUser = await getUserByClerkId(user?.id as string)
   const allSnippets = await fetchAllSnippets();
+  console.log("MongoUser:", mongoUser)
   
   
   
   return (
     <div className="grid gap-6 p-5">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">{user? `Welcome back, ${user?.firstName}`:"Welcome to SoundBite"}</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{user? `Welcome back, ${mongoUser?.firstName}`:"Welcome to SoundBite"}</h1>
         { mongoUser?._id ? <Link href="/dashboard/upload">
           <Button className="gap-2">
             <Upload className="h-4 w-4" />

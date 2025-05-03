@@ -1,6 +1,8 @@
 import stripe from 'stripe'
 import { NextResponse } from 'next/server'
 import { createOrder, incrementDownloadCount } from '@/lib/actions/order.actions'
+import User from '@/database/models/user.schema'
+import { addtoDownloadedSnippets } from '@/lib/actions/user.actions'
 
 export async function POST(request: Request) {
   const body = await request.text()

@@ -15,7 +15,9 @@ interface MusicSnippetProps {
     createdAt: string
     updatedAt: string
     file: string
-    author: string
+    author: string,
+    downloadCount: number,
+    price: number
   },
 
   mongoUser: string

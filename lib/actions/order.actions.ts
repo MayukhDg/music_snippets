@@ -5,6 +5,7 @@ import { connectToDatabase } from '@/database/connection';
 import Order from '@/database/models/order.schema';
 import mongoose from 'mongoose';
 import Snippet from '@/database/models/snippets.schema';
+import { addtoDownloadedSnippets } from './user.actions';
 
 interface Snippet {
   snippetId: string;
@@ -72,10 +73,26 @@ export const createOrder = async (order: any) => {
       await connectToDatabase()
       const newOrder = await Order.create(order)
       await newOrder.save()
+      await addtoDownloadedSnippets(
+            order.buyerId, order.snippetId)
       return JSON.parse(JSON.stringify(newOrder))  
     } catch (error) {
       console.error("Error creating order:", error)
       throw new Error("Error creating order")
+    }
+  }
+
+
+  export async function getOrdersByBuyerId(buyerId: string) {
+    try {
+      const orders = await Order.find({ buyerId: new mongoose.Types.ObjectId(buyerId) })
+        .populate({path:'snippetId', model:Snippet}) // optional: populates snippet details
+        .sort({ createdAt: 'desc' }); // newest orders first
+  
+      return JSON.parse(JSON.stringify(orders));
+    } catch (error) {
+      console.error('Error fetching orders by buyerId:', error);
+      return [];
     }
   }
 
@@ -103,3 +120,47 @@ export const createOrder = async (order: any) => {
         throw error;
     }
 }
+
+
+export async function getUserOrdersWithUniqueSnippets(userId:string) {
+   try {
+    
+    await connectToDatabase(); // Ensure the database connection is established
+    const objectId = new mongoose.Types.ObjectId(userId);
+
+    const uniqueOrders = await Order.aggregate([
+      {
+        $match: { buyerId: objectId } // filter by user
+      },
+      {
+        $sort: { createdAt: -1 } // optional: prefer latest orders
+      },
+      {
+        $group: {
+          _id: "$snippetId",
+          order: { $first: "$$ROOT" }
+        }
+      },
+      {
+        $replaceRoot: { newRoot: "$order" }
+      },
+      {
+        $lookup: {
+          from: "snippets",
+          localField: "snippetId",
+          foreignField: "_id",
+          as: "snippetId"
+        }
+      },
+      {
+        $unwind: "$snippetId"
+      }
+    ]);
+  
+    return JSON.parse(JSON.stringify(uniqueOrders));
+   } catch (error) {
+    console.error('Error fetching unique orders:', error);
+   }
+}
+
+

@@ -58,6 +58,9 @@ export async function createUser(user: CreateUserParams) {
       const user = await User.findOne({ clerkId }).populate({
         path:"uploadedSnippets",
         model:Snippet,
+      }).populate({
+        path:"downloadedSnippets",
+        model:Snippet,
       });
       return user ? JSON.parse(JSON.stringify(user)) : null;
     } catch (error) {
@@ -78,3 +81,17 @@ export async function createUser(user: CreateUserParams) {
       console.log(error);
     }
   }  
+
+
+  export async function addtoDownloadedSnippets(userId: string, snippetId: string) {
+    try {
+      await connectToDatabase();
+      await User.findByIdAndUpdate(userId, {
+        $push: { downloadedSnippets: snippetId }})
+       
+        return console.log("Snippet added to downloaded snippets successfully")
+  } catch (error) {
+    console.log(error);
+  }
+}
+    

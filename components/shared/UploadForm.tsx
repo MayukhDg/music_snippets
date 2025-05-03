@@ -13,7 +13,8 @@ import { useToast } from "@/hooks/use-toast"
 import { UploadButton } from "@/lib/uploadthing/utils"
 import { ClientUploadedFileData } from "uploadthing/types"
 import { addSnippet } from "@/lib/actions/snippet.actions"
-
+import { Music2Icon } from "lucide-react"
+ 
 
 interface UploadFormProps {
   mongoUser: any; // Replace 'any' with the appropriate type if known
@@ -99,11 +100,18 @@ const UploadForm: React.FC<UploadFormProps> = ({ mongoUser }) => {
           alert(`ERROR! ${error.message}`);
         }}
       />
+      { selectedFile?.ufsUrl && (
+              <div className="flex items-center ml-4 text-sm text-gray-500">
+                <Music2Icon className="w-10 h-10 mr-1" />
+                {selectedFile.name}
+              </div>
+            ) }
           </CardContent>
           <CardFooter>
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? "Uploading..." : "Upload Snippet"}
             </Button>
+            
           </CardFooter>
         </form>
   )

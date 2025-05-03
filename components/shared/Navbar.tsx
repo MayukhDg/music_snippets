@@ -1,7 +1,7 @@
 import React from 'react'
 import { UserButton } from "@clerk/nextjs"
 import Link from "next/link"
-import { AudioWaveformIcon as Waveform, Search, Upload, User, Home } from "lucide-react"
+import { AudioWaveformIcon as Waveform, Search, Upload, User, Home, ShoppingBag } from "lucide-react"
 import { currentUser } from "@clerk/nextjs/server"
 import { getUserByClerkId } from "@/lib/actions/user.actions"
 
@@ -45,7 +45,13 @@ const Navbar = async() => {
               <User className="h-5 w-5" />
               Profile
             </Link>
-          
+            <Link
+              href="/dashboard/orders"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+            >
+              <ShoppingBag className="h-5 w-5" />
+             Orders
+            </Link>
           </div>
           
         </aside> 
