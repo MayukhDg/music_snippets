@@ -20,7 +20,15 @@ export default async function DashboardPage({ searchParams }: SearchParamProps) 
  const userSnippets = await fetchUserSnippets(         
   { userId: mongoUser?._id, page, limit: 3 })
   const userDownloadCount  = await getUserDownloadCount(mongoUser?._id)
+  console.log("mongoUser", mongoUser  )
 
+  function canBuySnippet(snippetId:string) {
+    if(mongoUser?.downloadedSnippets?.some((snippet:any) => snippet._id.toString() === snippetId)){
+      return false
+    } else {
+      return true
+    }
+  }
   
   return (
     <div className="grid gap-6 p-5">
@@ -64,9 +72,17 @@ export default async function DashboardPage({ searchParams }: SearchParamProps) 
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {userSnippets?.data?.map((snippet:any) => (
-                <MusicSnippetCard mongoUser={mongoUser._id} key={snippet?._id} snippet={snippet} />
-              ))}
+              {
+              userSnippets?.data?.map((snippet:any) => {
+                
+                const userCanBuySnippet = canBuySnippet(snippet?._id)
+
+                return (
+                  <MusicSnippetCard userCanBuySnippet={userCanBuySnippet} mongoUser={mongoUser} key={snippet?._id} snippet={snippet} />
+                )
+              })
+              }
+        
             </div>
           </CardContent> 
         </Card>

@@ -20,14 +20,17 @@ interface MusicSnippetProps {
     price: number
   },
 
-  mongoUser: string
+  mongoUser: { _id: string } | string,
+  userCanBuySnippet: boolean
+
 }
 
-export function MusicSnippetCard({ snippet, mongoUser }: MusicSnippetProps) {
+export function MusicSnippetCard({ snippet, mongoUser, userCanBuySnippet  }: MusicSnippetProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [audioDuration, setAudioDuration] = useState(0)
   const audioRef = useRef<HTMLAudioElement>(null)
+
 
   const handleDeleteSnippet = async (id: string) => {
     try {
@@ -118,17 +121,18 @@ export function MusicSnippetCard({ snippet, mongoUser }: MusicSnippetProps) {
           <span>{formatTime(currentTime)} / {formatTime(audioDuration)}</span>
         </div>
         <div className="flex items-center gap-1">
-          <a  href={snippet.file} download target="_blank" rel="noopener noreferrer">
+        { !userCanBuySnippet &&  <a  href={snippet.file} download target="_blank" rel="noopener noreferrer">
           <Button size="icon" variant="ghost" className="h-8 w-8">
             <Download className="h-4 w-4" />
           </Button>
           </a>
-          { mongoUser === snippet.author && 
+         } { mongoUser === snippet.author && 
           <Button onClick={()=>handleDeleteSnippet(snippet._id)} size="icon" variant="ghost" className="h-8 w-8">
             <Trash className="h-4 w-4" />
           </Button>}
-          <Checkout snippet={snippet} userId={mongoUser}/>
-        </div>
+        { userCanBuySnippet && typeof mongoUser !== "string" && <Checkout snippet={snippet} userId={mongoUser._id}/>
+        
+}        </div>
       </CardFooter>
     </Card>
   )
