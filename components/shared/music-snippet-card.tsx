@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Play, Pause, Download, Trash } from "lucide-react"
 import Checkout from "./Checkout"
 import { deleteSnippet } from "@/lib/actions/snippet.actions"
+import Image from "next/image"
+import Link from "next/link"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 interface MusicSnippetProps {
   snippet: {
@@ -20,8 +23,8 @@ interface MusicSnippetProps {
     price: number
   },
 
-  mongoUser: { _id: string } | string,
-  userCanBuySnippet: boolean
+  mongoUser: string,
+  userCanBuySnippet?: boolean
 
 }
 
@@ -93,7 +96,15 @@ export function MusicSnippetCard({ snippet, mongoUser, userCanBuySnippet  }: Mus
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">{snippet.title}</CardTitle>
+       <div  className="flex items-center justify-between">
+       <CardTitle className="text-base">{snippet.title}</CardTitle>
+       <Link href={`/profile/${snippet?.author}`}>
+       <Avatar className="w-10 h-10 border-4 border-background bg-slate-700">
+              <AvatarImage src={"/placeholder.svg"} alt={"User"} />
+              <AvatarFallback>{"U"}</AvatarFallback>
+            </Avatar>
+       </Link>
+       </div>
       </CardHeader>
       <CardContent className="pb-2">
         <div className="h-12 bg-gray-100 dark:bg-gray-800 rounded-md flex items-center justify-center relative">
@@ -121,7 +132,7 @@ export function MusicSnippetCard({ snippet, mongoUser, userCanBuySnippet  }: Mus
           <span>{formatTime(currentTime)} / {formatTime(audioDuration)}</span>
         </div>
         <div className="flex items-center gap-1">
-        { !userCanBuySnippet &&  <a  href={snippet.file} download target="_blank" rel="noopener noreferrer">
+        { !userCanBuySnippet && mongoUser && <a  href={snippet.file} download target="_blank" rel="noopener noreferrer">
           <Button size="icon" variant="ghost" className="h-8 w-8">
             <Download className="h-4 w-4" />
           </Button>
@@ -130,7 +141,7 @@ export function MusicSnippetCard({ snippet, mongoUser, userCanBuySnippet  }: Mus
           <Button onClick={()=>handleDeleteSnippet(snippet._id)} size="icon" variant="ghost" className="h-8 w-8">
             <Trash className="h-4 w-4" />
           </Button>}
-        { userCanBuySnippet && typeof mongoUser !== "string" && <Checkout snippet={snippet} userId={mongoUser._id}/>
+        { userCanBuySnippet && <Checkout snippet={snippet} userId={mongoUser}/>
         
 }        </div>
       </CardFooter>

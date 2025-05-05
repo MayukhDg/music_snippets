@@ -12,9 +12,16 @@ export default async function HomePage() {
   const user = await currentUser()
   const mongoUser = await getUserByClerkId(user?.id as string)
   const allSnippets = await fetchAllSnippets();
-  console.log("MongoUser:", mongoUser)
+  console.log("All Snippets:", allSnippets)
   
-  
+  function canBuySnippet(currentSnippet:any) {
+    if(mongoUser?.downloadedSnippets?.some((snippet:any) => snippet._id === currentSnippet._id) || !mongoUser?._id || 
+    mongoUser?._id === currentSnippet?.author) {
+      return false
+    } else {
+      return true
+    }
+  }  
   
   return (
     <div className="grid gap-6 p-5">
@@ -43,13 +50,18 @@ export default async function HomePage() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {allSnippets.length > 0 ? allSnippets.map((snippet:any) => (
-                <MusicSnippetCard mongoUser={mongoUser?._id} key={snippet?._id} snippet={snippet} />
-              )): (
-                <div className="flex items-center justify-center w-full h-full">
-                  <p className="text-gray-500">No snippets available</p>
-                </div>
-              )}
+            {
+              allSnippets?.map((snippet:any) => {
+                
+                const userCanBuySnippet = canBuySnippet(snippet)
+
+                return (
+                  <MusicSnippetCard userCanBuySnippet={userCanBuySnippet} mongoUser={mongoUser?._id} key={snippet?._id} snippet={snippet} />
+                )
+              })
+              }
+        
+
             </div>
           </CardContent> 
         </Card>

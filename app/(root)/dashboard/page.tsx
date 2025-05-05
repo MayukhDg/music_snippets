@@ -22,14 +22,14 @@ export default async function DashboardPage({ searchParams }: SearchParamProps) 
   const userDownloadCount  = await getUserDownloadCount(mongoUser?._id)
   console.log("mongoUser", mongoUser  )
 
-  function canBuySnippet(snippetId:string) {
-    if(mongoUser?.downloadedSnippets?.some((snippet:any) => snippet._id.toString() === snippetId)){
+  function canBuySnippet(currentSnippet:any) {
+    if(mongoUser?.downloadedSnippets?.some((snippet:any) => snippet._id === currentSnippet._id) || !mongoUser?._id || 
+    mongoUser?._id === currentSnippet?.author) {
       return false
     } else {
       return true
     }
   }
-  
   return (
     <div className="grid gap-6 p-5">
       <div className="flex items-center justify-between">
@@ -75,10 +75,10 @@ export default async function DashboardPage({ searchParams }: SearchParamProps) 
               {
               userSnippets?.data?.map((snippet:any) => {
                 
-                const userCanBuySnippet = canBuySnippet(snippet?._id)
+                const userCanBuySnippet = canBuySnippet(snippet)
 
                 return (
-                  <MusicSnippetCard userCanBuySnippet={userCanBuySnippet} mongoUser={mongoUser} key={snippet?._id} snippet={snippet} />
+                  <MusicSnippetCard userCanBuySnippet={userCanBuySnippet} mongoUser={mongoUser?._id.toString()} key={snippet?._id} snippet={snippet} />
                 )
               })
               }

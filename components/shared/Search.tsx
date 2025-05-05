@@ -12,13 +12,23 @@ import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils"
 import Pagination from "./Pagination"
 
 
-export default function SearchComponent({ allSnippets, page, totalPages }: { allSnippets: any[], 
+export default function SearchComponent({ allSnippets, page, totalPages, mongoUser }: { allSnippets: any[], 
   page: number, 
-  totalPages: number 
+  totalPages: number,
+  mongoUser:any 
 }){
   const [query, setQuery] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  function canBuySnippet(currentSnippet:any) {
+    if(mongoUser?.downloadedSnippets?.some((snippet:any) => snippet._id === currentSnippet._id) || !mongoUser?._id || 
+    mongoUser?._id === currentSnippet?.author) {
+      return false
+    } else {
+      return true
+    }
+  }
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -63,9 +73,15 @@ export default function SearchComponent({ allSnippets, page, totalPages }: { all
       </Card>
          {allSnippets.length > 0 ? (
             <div className="grid gap-4 mt-4">
-              {allSnippets.map((snippet) => (
-                <MusicSnippetCard key={snippet._id} snippet={snippet} />
-              ))}
+              {allSnippets.map((snippet) => {
+                
+                const userCanBuySnippet = canBuySnippet(snippet)
+                return (
+                  (
+                    <MusicSnippetCard userCanBuySnippet={userCanBuySnippet} mongoUser={mongoUser?._id.toString()} key={snippet._id} snippet={snippet} />
+                  )
+                )
+              })}
             </div>
           ):
           <p className="mt-3">No Results Yet</p>
