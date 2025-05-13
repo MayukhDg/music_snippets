@@ -1,5 +1,3 @@
-Write mongodb code for uploading snippets to database
-Implement stripe payments
 
-
-
+1. Create a sold snippets array for every user
+2. Collect commission on every snippet sold

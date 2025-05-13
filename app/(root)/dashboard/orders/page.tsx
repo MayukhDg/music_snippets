@@ -9,9 +9,6 @@ const Orders = async () => {
  
   const user = await currentUser()
     const mongoUser = await getUserByClerkId(user?.id as string)
-   const uniqueOrders = (await getUserOrdersWithUniqueSnippets(mongoUser._id.toString())) ?? []
- 
-  console.log("Unique Orders:", uniqueOrders)
     
   function canBuySnippet(currentSnippet:any) {
     if(mongoUser?.downloadedSnippets?.some((snippet:any) => snippet._id === currentSnippet._id) || !mongoUser?._id || 
@@ -31,13 +28,13 @@ const Orders = async () => {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {uniqueOrders?.map((order:any) => {
+              {mongoUser?.downloadedSnippets?.map((snippet:any) => {
                 
-                const userCanBuySnippet = canBuySnippet(order?.snippetId)
+                const userCanBuySnippet = canBuySnippet(snippet)
 
                 return (
                   (
-                    <MusicSnippetCard userCanBuySnippet={userCanBuySnippet} mongoUser={mongoUser?._id} key={order?._id.toString()} snippet={order.snippetId} />
+                    <MusicSnippetCard userCanBuySnippet={userCanBuySnippet} mongoUser={mongoUser?._id} key={snippet?._id.toString()} snippet={snippet} />
                   )
                 )
               })}

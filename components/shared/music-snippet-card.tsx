@@ -24,11 +24,12 @@ interface MusicSnippetProps {
   },
 
   mongoUser: string,
-  userCanBuySnippet?: boolean
+  userCanBuySnippet?: boolean,
+  currentUser?: any
 
 }
 
-export function MusicSnippetCard({ snippet, mongoUser, userCanBuySnippet  }: MusicSnippetProps) {
+export function MusicSnippetCard({ snippet, mongoUser, userCanBuySnippet, currentUser  }: MusicSnippetProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [audioDuration, setAudioDuration] = useState(0)
@@ -99,7 +100,7 @@ export function MusicSnippetCard({ snippet, mongoUser, userCanBuySnippet  }: Mus
        <div  className="flex items-center justify-between">
        <CardTitle className="text-base">{snippet.title}</CardTitle>
        <Link href={`/profile/${snippet?.author}`}>
-       <Avatar className="w-10 h-10 border-4 border-background bg-slate-700">
+       <Avatar className="w-10 h-10 border-4 border-background bg-slate-700 ml-3">
               <AvatarImage src={"/placeholder.svg"} alt={"User"} />
               <AvatarFallback>{"U"}</AvatarFallback>
             </Avatar>
@@ -132,12 +133,12 @@ export function MusicSnippetCard({ snippet, mongoUser, userCanBuySnippet  }: Mus
           <span>{formatTime(currentTime)} / {formatTime(audioDuration)}</span>
         </div>
         <div className="flex items-center gap-1">
-        { !userCanBuySnippet && mongoUser && <a  href={snippet.file} download target="_blank" rel="noopener noreferrer">
+        { !userCanBuySnippet && currentUser && <a  href={snippet.file} download target="_blank" rel="noopener noreferrer">
           <Button size="icon" variant="ghost" className="h-8 w-8">
             <Download className="h-4 w-4" />
           </Button>
           </a>
-         } { mongoUser === snippet.author && 
+         } { mongoUser === snippet?.author && currentUser?.id &&
           <Button onClick={()=>handleDeleteSnippet(snippet._id)} size="icon" variant="ghost" className="h-8 w-8">
             <Trash className="h-4 w-4" />
           </Button>}

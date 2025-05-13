@@ -2,8 +2,6 @@ import { currentUser } from "@clerk/nextjs/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { MusicSnippetCard } from "@/components/shared/music-snippet-card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Edit, Settings } from "lucide-react"
 import { getUserByClerkId, getUserById } from "@/lib/actions/user.actions"
 import { fetchUserSnippets } from "@/lib/actions/snippet.actions"
 import { getUserDownloadCount } from "@/lib/actions/order.actions"
@@ -23,8 +21,7 @@ export default async function ProfilePage({ searchParams, params }: SearchParamP
    const userSnippets = await fetchUserSnippets(         
     { userId: mongoUser?._id, page, limit: 3 })
     const userDownloadCount  = await getUserDownloadCount(mongoUser?._id)
-    console.log(user)
-  
+    
     function canBuySnippet(currentSnippet:any) {
       if(mongoUser?.downloadedSnippets?.some((snippet:any) => snippet._id === currentSnippet._id) || !mongoUser?._id || 
       mongoUser?._id === currentSnippet?.author) {
@@ -98,7 +95,7 @@ export default async function ProfilePage({ searchParams, params }: SearchParamP
               const userCanBuySnippet = canBuySnippet(snippet)
               return (
                 (
-                  <MusicSnippetCard userCanBuySnippet={userCanBuySnippet} mongoUser={mongoUser?._id} key={snippet._id} snippet={snippet} />
+                  <MusicSnippetCard currentUser={user?.id.toString()} userCanBuySnippet={userCanBuySnippet} mongoUser={mongoUser?._id} key={snippet._id} snippet={snippet} />
                 )
               )
             })}

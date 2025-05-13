@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={inter.className}>
+        <body className= {inter.className}>
             
               <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5">
                       <div className="container flex h-16 items-center justify-between">
@@ -37,7 +37,7 @@ export default function RootLayout({
                     </header>
               <div className="flex">
               <Navbar/>
-            <main>
+            <main className="flex flex-1">
              {children}  
             </main>
               </div>
