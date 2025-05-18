@@ -15,16 +15,16 @@ interface SearchParamProps {
 
 export default async function ProfilePage({ searchParams, params }: SearchParamProps) {
   const user = await currentUser() 
-
-  const mongoUser = await getUserById(params?.id as string)
-   const page = Number(searchParams?.page) || 1;
+  const profileUser = await getUserById(params?.id as string)
+  const currUser = await getUserByClerkId(user?.id as string) 
+  const page = Number(searchParams?.page) || 1;
    const userSnippets = await fetchUserSnippets(         
-    { userId: mongoUser?._id, page, limit: 3 })
-    const userDownloadCount  = await getUserDownloadCount(mongoUser?._id)
+    { userId: profileUser?._id, page, limit: 3 })
+    const userDownloadCount  = await getUserDownloadCount(profileUser?._id)
     
     function canBuySnippet(currentSnippet:any) {
-      if(mongoUser?.downloadedSnippets?.some((snippet:any) => snippet._id === currentSnippet._id) || !mongoUser?._id || 
-      mongoUser?._id === currentSnippet?.author) {
+      if(currUser?.downloadedSnippets?.some((snippet:any) => snippet._id === currentSnippet._id) || !user?.id || 
+      currUser?._id === currentSnippet?.author) {
         return false
       } else {
         return true
@@ -34,21 +34,21 @@ export default async function ProfilePage({ searchParams, params }: SearchParamP
 
   return (
     <div className="grid gap-2 p-5">
-      <h1 className="text-3xl font-bold tracking-tight">{user?.id === mongoUser?.clerkId?.toString() ? `Your Profile` : `${mongoUser?.username}'s Profile`}</h1>
+      <h1 className="text-3xl font-bold tracking-tight">{user?.id === profileUser?.clerkId?.toString() ? `Your Profile` : `${profileUser?.username}'s Profile`}</h1>
 
       <Card>
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
             <Avatar className="w-24 h-24 border-4 border-background">
-              <AvatarImage src={mongoUser?.photo || "/placeholder.svg"} alt={mongoUser?.firstName || "User"} />
-              <AvatarFallback>{mongoUser?.firstName?.charAt(0) || "U"}</AvatarFallback>
+              <AvatarImage src={profileUser?.photo || "/placeholder.svg"} alt={profileUser?.firstName || "User"} />
+              <AvatarFallback>{profileUser?.firstName?.charAt(0) || "U"}</AvatarFallback>
             </Avatar>
 
             <div className="flex-1 space-y-1">
               <h2 className="text-2xl font-bold">
-                {mongoUser?.firstName} {mongoUser?.lastName}
+                {profileUser?.firstName} {profileUser?.lastName}
               </h2>
-              <p className="text-gray-500">@{mongoUser?.username || mongoUser?.firstName?.toLowerCase()}</p>
+              <p className="text-gray-500">@{profileUser?.username || profileUser?.firstName?.toLowerCase()}</p>
               <p className="text-sm">Member since {new Date().toLocaleDateString()}</p>
             </div>
             { /*
@@ -69,7 +69,7 @@ export default async function ProfilePage({ searchParams, params }: SearchParamP
       <Card>
         <CardHeader>
           <CardTitle>Profile Stats</CardTitle>
-          <CardDescription>{user?.id === mongoUser?.clerkId?.toString() ? `Your` : `${mongoUser?.username}'s Profile`} activity on SoundBite</CardDescription>
+          <CardDescription>{user?.id === profileUser?.clerkId?.toString() ? `Your` : `${profileUser?.username}'s Profile`} activity on SoundBite</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
@@ -86,7 +86,7 @@ export default async function ProfilePage({ searchParams, params }: SearchParamP
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>{user?.id === mongoUser?.clerkId?.toString() ? `Your` : `${mongoUser?.username}'s`} Music Snippets</CardTitle>
+          <CardTitle>{user?.id === profileUser?.clerkId?.toString() ? `Your` : `${profileUser?.username}'s`} Music Snippets</CardTitle>
        </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -95,7 +95,7 @@ export default async function ProfilePage({ searchParams, params }: SearchParamP
               const userCanBuySnippet = canBuySnippet(snippet)
               return (
                 (
-                  <MusicSnippetCard currentUser={user?.id.toString()} userCanBuySnippet={userCanBuySnippet} mongoUser={mongoUser?._id} key={snippet._id} snippet={snippet} />
+                  <MusicSnippetCard mongoUser={currUser?._id} userCanBuySnippet={userCanBuySnippet} key={snippet._id} snippet={snippet} />
                 )
               )
             })}

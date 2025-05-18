@@ -41,7 +41,7 @@ const Checkout = ({ snippet, userId }: any) => {
 
   return (
     <form action={onCheckout}>
-      <Button role='link' type='submit' size="lg" className="h-8 w-8 text-sm">
+      <Button role='link' type='submit' size="lg" className="h-8 w-8 text-sm ml-4">
         Buy
       </Button>
     </form>

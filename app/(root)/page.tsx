@@ -15,7 +15,7 @@ export default async function HomePage() {
   console.log("All Snippets:", allSnippets)
   
   function canBuySnippet(currentSnippet:any) {
-    if(mongoUser?.downloadedSnippets?.some((snippet:any) => snippet._id === currentSnippet._id) || !mongoUser?._id || 
+    if(mongoUser?.downloadedSnippets?.some((snippet:any) => snippet._id === currentSnippet._id) || !mongoUser?._id || !user?.id ||
     mongoUser?._id === currentSnippet?.author) {
       return false
     } else {
@@ -26,7 +26,11 @@ export default async function HomePage() {
   return (
     <div className="grid gap-6 p-5">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">{user? `Welcome back, ${mongoUser?.firstName}`:"Welcome to SoundBite"}</h1>
+        <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-bold tracking-tight">{user? `Welcome back, ${mongoUser?.firstName || mongoUser?.username}`:"Welcome to SoundBite"}</h1>
+        <p className="text-muted-foreground">Upload and share your music snippets with the world.</p>
+        <p className="text-muted-foreground">Explore and download snippets from other artists.</p>
+        </div>
         { mongoUser?._id ? <Link href="/dashboard/upload">
           <Button className="gap-2">
             <Upload className="h-4 w-4" />
@@ -34,7 +38,7 @@ export default async function HomePage() {
           </Button>
         </Link>:
         <Link href="/sign-in">
-        <Button className="gap-2">
+        <Button className="gap-2 ml-3">
           <LogInIcon className="h-4 w-4" />
           Log In 
         </Button>

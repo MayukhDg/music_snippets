@@ -78,7 +78,7 @@ export default async function DashboardPage({ searchParams }: SearchParamProps) 
                 const userCanBuySnippet = canBuySnippet(snippet)
 
                 return (
-                  <MusicSnippetCard userCanBuySnippet={userCanBuySnippet} mongoUser={mongoUser?._id.toString()} key={snippet?._id} snippet={snippet} />
+                  <MusicSnippetCard userCanBuySnippet={userCanBuySnippet} mongoUser={mongoUser?._id} key={snippet?._id} snippet={snippet} />
                 )
               })
               }

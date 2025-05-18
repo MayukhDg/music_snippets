@@ -18,45 +18,38 @@ interface MusicSnippetProps {
     createdAt: string
     updatedAt: string
     file: string
-    author: string,
-    downloadCount: number,
+    author: string
+    downloadCount: number
     price: number
-  },
-
-  mongoUser: string,
-  userCanBuySnippet?: boolean,
-  currentUser?: any
-
+    description?: string
+  }
+  mongoUser?: string
+  userCanBuySnippet?: boolean
+  currUser?:any
 }
 
-export function MusicSnippetCard({ snippet, mongoUser, userCanBuySnippet, currentUser  }: MusicSnippetProps) {
+export function MusicSnippetCard({ snippet, mongoUser, userCanBuySnippet, currUser }: MusicSnippetProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [audioDuration, setAudioDuration] = useState(0)
   const audioRef = useRef<HTMLAudioElement>(null)
 
-
   const handleDeleteSnippet = async (id: string) => {
     try {
       const confirmed = confirm("Are you sure you want to delete this snippet?")
-      if (confirmed){
+      if (confirmed) {
         await deleteSnippet(id)
+        alert("Snippet deleted successfully")
       }
-      alert("Snippet deleted successfully")
     } catch (error) {
-      console.error("Error deleting snippet:", error) 
+      console.error("Error deleting snippet:", error)
       alert("Failed to delete snippet")
     }
   }
 
   const togglePlay = () => {
     if (!audioRef.current) return
-
-    if (isPlaying) {
-      audioRef.current.pause()
-    } else {
-      audioRef.current.play()
-    }
+    isPlaying ? audioRef.current.pause() : audioRef.current.play()
     setIsPlaying(!isPlaying)
   }
 
@@ -64,18 +57,12 @@ export function MusicSnippetCard({ snippet, mongoUser, userCanBuySnippet, curren
     setIsPlaying(false)
   }
 
-  // Update currentTime while playing
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
 
-    const updateProgress = () => {
-      setCurrentTime(audio.currentTime)
-    }
-
-    const setMetadata = () => {
-      setAudioDuration(audio.duration)
-    }
+    const updateProgress = () => setCurrentTime(audio.currentTime)
+    const setMetadata = () => setAudioDuration(audio.duration)
 
     audio.addEventListener("timeupdate", updateProgress)
     audio.addEventListener("loadedmetadata", setMetadata)
@@ -97,34 +84,39 @@ export function MusicSnippetCard({ snippet, mongoUser, userCanBuySnippet, curren
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-2">
-       <div  className="flex items-center justify-between">
-       <CardTitle className="text-base">{snippet.title}</CardTitle>
-       <Link href={`/profile/${snippet?.author}`}>
-       <Avatar className="w-10 h-10 border-4 border-background bg-slate-700 ml-3">
-              <AvatarImage src={"/placeholder.svg"} alt={"User"} />
-              <AvatarFallback>{"U"}</AvatarFallback>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-base">{snippet.title}</CardTitle>
+            <p className="text-sm text-gray-500">₹{snippet.price.toFixed(2)}</p>
+          </div>
+          <Link href={`/profile/${snippet?.author}`}>
+            <Avatar className="w-10 h-10 border-4 border-background bg-slate-700 ml-3">
+              <AvatarImage src={"/placeholder.svg"} alt="User" />
+              <AvatarFallback>U</AvatarFallback>
             </Avatar>
-       </Link>
-       </div>
+          </Link>
+        </div>
       </CardHeader>
-      <CardContent className="pb-2">
+
+      <CardContent className="space-y-3 pb-2">
+        {snippet.content && (
+          <p className="text-sm text-gray-700 dark:text-gray-300">{snippet.content}</p>
+        )}
+
         <div className="h-12 bg-gray-100 dark:bg-gray-800 rounded-md flex items-center justify-center relative">
           <div className="w-full px-2">
             <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden relative">
-              <div 
-                className="h-full bg-purple-500 rounded-full transition-all duration-200" 
-                style={{ width: `${progressPercent}%` }} 
+              <div
+                className="h-full bg-purple-500 rounded-full transition-all duration-200"
+                style={{ width: `${progressPercent}%` }}
               ></div>
             </div>
           </div>
         </div>
-        {/* Hidden audio element */}
-        <audio 
-          ref={audioRef} 
-          src={snippet.file} 
-          onEnded={handleEnded}
-        />
+
+        <audio ref={audioRef} src={snippet.file} onEnded={handleEnded} />
       </CardContent>
+
       <CardFooter className="flex justify-between text-xs text-gray-500">
         <div className="flex items-center gap-2">
           <Button size="icon" variant="ghost" className="h-8 w-8" onClick={togglePlay}>
@@ -133,18 +125,20 @@ export function MusicSnippetCard({ snippet, mongoUser, userCanBuySnippet, curren
           <span>{formatTime(currentTime)} / {formatTime(audioDuration)}</span>
         </div>
         <div className="flex items-center gap-1">
-        { !userCanBuySnippet && currentUser && <a  href={snippet.file} download target="_blank" rel="noopener noreferrer">
-          <Button size="icon" variant="ghost" className="h-8 w-8">
-            <Download className="h-4 w-4" />
-          </Button>
-          </a>
-         } { mongoUser === snippet?.author && currentUser?.id &&
-          <Button onClick={()=>handleDeleteSnippet(snippet._id)} size="icon" variant="ghost" className="h-8 w-8">
-            <Trash className="h-4 w-4" />
-          </Button>}
-        { userCanBuySnippet && <Checkout snippet={snippet} userId={mongoUser}/>
-        
-}        </div>
+          {!userCanBuySnippet && mongoUser &&( 
+            <a href={snippet.file} download target="_blank" rel="noopener noreferrer">
+              <Button size="icon" variant="ghost" className="h-8 w-8">
+                <Download className="h-4 w-4" />
+              </Button>
+            </a>
+          )}
+          {mongoUser === snippet?.author &&
+            <Button onClick={() => handleDeleteSnippet(snippet._id)} size="icon" variant="ghost" className="h-8 w-8">
+              <Trash className="h-4 w-4" />
+            </Button>
+          }
+          {userCanBuySnippet && <Checkout snippet={snippet} userId={mongoUser} />}
+        </div>
       </CardFooter>
     </Card>
   )
